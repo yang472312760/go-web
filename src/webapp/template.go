@@ -42,9 +42,33 @@ func rangeTemplate(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, tests)
 }
 
+func testWith(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFiles("src/webapp/with.html"))
+
+	t.Execute(w, "狸猫")
+}
+
+func testTemplate(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFiles("src/webapp/template1.html", "src/webapp/template2.html"))
+	t.Execute(w, "我能将数据传入到两个template吗？")
+}
+
+func testModel(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFiles("src/webapp/model2.html"))
+	t.ExecuteTemplate(w, "model2", "model2")
+}
+func testModel1(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFiles("src/webapp/model1.html"))
+	t.ExecuteTemplate(w, "model", "model2")
+}
+
 func main() {
 	http.HandleFunc("/template", handlerTemplate)
 	http.HandleFunc("/age", ageTemplate)
 	http.HandleFunc("/range", rangeTemplate)
-	http.ListenAndServe(":8081", nil)
+	http.HandleFunc("/with", testWith)
+	http.HandleFunc("/testTemplate", testTemplate)
+	http.HandleFunc("/testModel", testModel)
+	http.HandleFunc("/testModel1", testModel1)
+	http.ListenAndServe(":8080", nil)
 }
